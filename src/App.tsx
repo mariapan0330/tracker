@@ -1,9 +1,11 @@
 import "./App.css";
 import Home from "./components/Home";
+import NavBar from "./components/NavBar";
 
 function App() {
   return (
-    <div className="h-screen bg-red-400">
+    <div className="bg-gradient-to-t from-cyan-700 to-blue-950">
+      <NavBar />
       <Home />
     </div>
   );
