@@ -2,7 +2,7 @@ import React from "react";
 
 export default function NavBar() {
   return (
-    <div className="flex justify-around bg-slate-900 p-5 px-16">
+    <div className="flex justify-start items-center bg-slate-900 p-3 px-16 sticky top-0">
       <a href="/">
         <div className="flex">
           <img
@@ -15,9 +15,6 @@ export default function NavBar() {
           </div>
         </div>
       </a>
-      <div className="text-yellow-500">Home</div>
-      <div className="text-yellow-500">Calendar</div>
-      <div className="text-yellow-500">Tracker</div>
     </div>
   );
 }
