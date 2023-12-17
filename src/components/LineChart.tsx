@@ -87,7 +87,7 @@ export default function LineChart() {
   };
 
   return (
-    <div className="w-5/6 md:w-3/4">
+    <div className="w-5/6 md:w-3/4 h-screen">
       <h1 className="flex justify-center text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
         THIS WEEK 12.10.23 - 12.16.23
       </h1>
