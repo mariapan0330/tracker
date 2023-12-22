@@ -1,0 +1,26 @@
+{
+    "user1@gmail.com":{
+        "12-22-23": {
+        "weight":165,
+        "goals":"75%",
+        "notes":"Felt sick today"
+        },
+        "12-23-23": {
+            "weight":167,
+            "goals":"100%",
+            "notes":""
+        }
+    },
+    "user2@gmail.com":{
+        "12-22-23": {
+        "weight":160,
+        "goals":"100%",
+        "notes":"Felt great today"
+        },
+        "12-23-23": {
+            "weight":157,
+            "goals":"100%",
+            "notes":"Ate a bagel"
+        }
+    }
+}

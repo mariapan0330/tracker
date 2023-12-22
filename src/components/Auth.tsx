@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import themeFonts from "../styles/themeFonts";
 
 export default function Auth() {
   const [email, setEmail] = useState<string>("");
@@ -51,18 +52,30 @@ export default function Auth() {
       shadow-lg
       "
       >
-        <h1 className="text-[#22A5BA] text-3xl font-['Righteous']">Email</h1>
+        <h1
+          className="text-[#22A5BA] text-3xl"
+          style={{ fontFamily: themeFonts.subtitle }}
+        >
+          Email
+        </h1>
         <input
           placeholder="Email..."
-          className="bg-[#212E53] text-yellow-100 p-2 md:p-5 text-lg font-mono rounded-xl"
+          className="bg-[#212E53] text-yellow-100 p-2 md:p-5 text-lg rounded-xl"
+          style={{ fontFamily: themeFonts.inputField }}
           onChange={(e) => {
             setEmail(e.target.value);
           }}
         />
-        <h1 className="text-[#8ACF9D] text-3xl font-['Righteous'] pt-8">Password</h1>
+        <h1
+          className="text-[#8ACF9D] text-3xl pt-8"
+          style={{ fontFamily: themeFonts.subtitle }}
+        >
+          Password
+        </h1>
         <input
           placeholder="Password..."
-          className="bg-[#212E53] text-yellow-100 p-2 md:p-5 text-lg font-mono rounded-xl"
+          className="bg-[#212E53] text-yellow-100 p-2 md:p-5 text-lg rounded-xl"
+          style={{ fontFamily: themeFonts.inputField }}
           type="password"
           onChange={(e) => {
             setPw(e.target.value);
@@ -73,16 +86,18 @@ export default function Auth() {
           <>
             <h1
               className="
-            text-[#FCFD7F] text-3xl font-['Righteous'] pt-8"
+            text-[#FCFD7F] text-3xl pt-8"
+              style={{ fontFamily: themeFonts.subtitle }}
             >
               Retype Password
             </h1>
             <input
               placeholder="Password..."
-              className="bg-[#212E53] text-yellow-100 p-2 md:p-5 text-lg font-mono rounded-xl"
+              className="bg-[#212E53] text-yellow-100 p-2 md:p-5 text-lg rounded-xl"
+              style={{ fontFamily: themeFonts.inputField }}
               type="password"
               onChange={(e) => {
-                setPw(e.target.value);
+                setRetypePw(e.target.value);
               }}
             />
           </>
@@ -93,7 +108,7 @@ export default function Auth() {
           className="
             p-1 md:p-3 px-10 md:px-20 
             rounded-xl
-            text-xl md:text-3xl font-['Righteous'] 
+            text-xl md:text-3xl
             bg-gradient-to-t
             from-amber-600
             to-amber-400
@@ -101,6 +116,7 @@ export default function Auth() {
             hover:to-cyan-600 
             active:from-cyan-900
             active:bg-cyan-950"
+          style={{ fontFamily: themeFonts.subtitle }}
           onClick={isSigningUp ? signUp : signIn}
         >
           {isSigningUp ? "Sign Up" : "Log In"}
@@ -112,12 +128,12 @@ export default function Auth() {
         pt-5 
       text-white 
         text-md md:text-xl 
-        font-['Righteous'] 
         underline underline-offset-2 
         hover:underline-offset-8 
         hover:cursor-pointer 
         active:text-cyan-600
         "
+          style={{ fontFamily: themeFonts.subtitle }}
           onClick={() => setIsSigningUp((p) => !p)}
         >
           {isSigningUp ? "Log In" : "Sign Up"}
