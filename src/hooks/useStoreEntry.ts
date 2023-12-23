@@ -1,4 +1,4 @@
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 const useStoreEntry = () => {
@@ -14,8 +14,8 @@ const useStoreEntry = () => {
     try {
       console.log("USESTORE selectedDate: ", entryData.date);
       const datesData = doc(db, "users", email, "entries", entryData.date);
-      const mergedData = { ...entryData, ...userEntries[entryData.date] };
-      console.log(mergedData);
+      // const mergedData = { ...entryData, ...userEntries[entryData.date] };
+      // console.log(mergedData);
 
       let validData = {};
       if (entryData.weight) {
@@ -24,7 +24,8 @@ const useStoreEntry = () => {
       if (entryData.goalsPercent) {
         validData = { ...validData, goalsPercent: entryData.goalsPercent };
       }
-      await updateDoc(datesData, validData);
+      validData = { ...validData, date: entryData.date, notes: entryData.notes };
+      await setDoc(datesData, validData, { merge: true });
       return true;
     } catch (error) {
       console.error("Error storing entry:", error);

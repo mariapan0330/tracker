@@ -84,12 +84,12 @@ export default function NewEntryForm() {
   }, [selectedDate, t]);
 
   return (
-    <div className="overflow-x-hidden h-screen flex justify-center pt-10">
+    <div className="h-screen flex justify-center pt-10 bg-gradient-to-t from-yellow-400 to-amber-700">
       <div
         className="
       flex flex-col justify-center items-center
       h-fit
-      p-10 py-20 rounded-3xl 
+      p-10 rounded-3xl
       select-none
       "
         style={{ backgroundColor: themeColors.darkBlue, fontFamily: themeFonts.subtitle }}
@@ -161,9 +161,7 @@ export default function NewEntryForm() {
               />
             ) : (
               <div style={{ color: "#22A5BA" }} className="flex flex-wrap">
-                Today's goal completion is calculated for you based on how your checklist
-                <br />
-                is going, but you can retrospectively change it for other days.
+                Calculated for today based on your checklist.
               </div>
             )}
           </div>
@@ -178,7 +176,7 @@ export default function NewEntryForm() {
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
-        <div className="text-yellow-500 mt-8 mb-1">{submitError}</div>
+        <div className="text-yellow-500 mt-8 mb-1 w-5/6">{submitError}</div>
         <div className="text-pink-800 mb-1">{submitError2}</div>
         <button
           onClick={handleSubmit}
@@ -190,10 +188,10 @@ export default function NewEntryForm() {
           style={{
             backgroundColor:
               submitState === "hover"
-                ? themeColors.teal
-                : submitState === "active"
                 ? themeColors.darkYellow
-                : themeColors.blue,
+                : submitState === "active"
+                ? themeColors.yellow
+                : themeColors.teal,
           }}
         >
           Submit

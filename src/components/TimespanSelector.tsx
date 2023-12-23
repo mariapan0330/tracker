@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import themeColors from "../styles/themeColors";
 import themeFonts from "../styles/themeFonts";
 
 export default function TimespanSelector({
   setSelectedTimespan,
 }: {
-  setSelectedTimespan: any;
+  setSelectedTimespan: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const handleSetTimespan = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedTimespan(event.target.value);
+  };
   return (
     <div className="flex justify-center items-center">
       <select
@@ -18,22 +21,13 @@ export default function TimespanSelector({
           color: themeColors.yellow,
         }}
         className="p-2 px-8 rounded-xl text-lg font-bold"
+        onChange={handleSetTimespan}
       >
-        <option value="this week" onSelect={() => setSelectedTimespan("this week")}>
-          This Week
-        </option>
-        <option value="this month" onSelect={() => setSelectedTimespan("this month")}>
-          This Month
-        </option>
-        <option value="last 30 days" onSelect={() => setSelectedTimespan("last 30 days")}>
-          Last 30 Days
-        </option>
-        <option value="this year" onSelect={() => setSelectedTimespan("this year")}>
-          This Year
-        </option>
-        <option value="last year" onSelect={() => setSelectedTimespan("last year")}>
-          Last Year
-        </option>
+        <option value="this week">This Week</option>
+        <option value="this month">This Month</option>
+        <option value="last 30 days">Last 30 Days</option>
+        <option value="this year">This Year</option>
+        <option value="last year">Last Year</option>
       </select>
     </div>
   );

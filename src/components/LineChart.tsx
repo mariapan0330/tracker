@@ -18,11 +18,14 @@ import { Link } from "react-router-dom";
 import useUserEntries from "../hooks/useUserEntries";
 import TimespanSelector from "./TimespanSelector";
 import useUserData from "../hooks/useUserEmail";
+import LineChartNotes from "./LineChartNotes";
 
 export default function LineChart() {
-  const [selectedTimespan, setSelectedTimespan] = useState<string>();
+  const [selectedTimespan, setSelectedTimespan] = useState<string>("this week");
   const [weightData, setWeightData] = useState<any>([]);
-  const [goalPercentData, setGoalPercentData] = useState<any>([]);
+  const [goalsPercentData, setGoalPercentData] = useState<any>([]);
+  const [notesData, setNotesData] = useState<any>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const userEmail = useUserData();
   const userEntries = useUserEntries(userEmail);
   ChartJS.register(
@@ -35,21 +38,50 @@ export default function LineChart() {
     Tooltip
   );
 
-  const getStartOfWeek = () => {
+  const getStartOfWeek = (selectedTimespan: string | undefined) => {
     const now = new Date();
-    const dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - dayOfWeek); // Move to the beginning of the week
-    startOfWeek.setHours(0, 0, 0, 0); // Set time to midnight
-    return startOfWeek;
+    const startOfPeriod = new Date(now);
+
+    if (selectedTimespan === "this month") {
+      startOfPeriod.setDate(1); // Set to the first day of the month
+    } else if (selectedTimespan === "last 30 days") {
+      startOfPeriod.setDate(now.getDate() - 29); // Set to 30 days ago
+    } else if (selectedTimespan === "this year") {
+      startOfPeriod.setMonth(0, 1); // Set to the first day of the year
+    } else if (selectedTimespan === "last year") {
+      startOfPeriod.setFullYear(now.getFullYear() - 1, 0, 1); // Set to the first day of the last year
+    } else {
+      const dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+      startOfPeriod.setDate(now.getDate() - dayOfWeek); // Move to the beginning of the week
+    }
+
+    startOfPeriod.setHours(0, 0, 0, 0); // Set time to midnight
+    return startOfPeriod;
   };
 
-  const getEndOfWeek = () => {
-    const startOfWeek = getStartOfWeek();
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Move to the end of the week
-    endOfWeek.setHours(23, 59, 59, 999); // Set time to the last millisecond of the day
-    return endOfWeek;
+  const getEndOfWeek = (selectedTimespan: string | undefined) => {
+    const startOfPeriod = getStartOfWeek(selectedTimespan);
+    const endOfPeriod = new Date();
+
+    if (selectedTimespan === "this month") {
+      const lastDayOfMonth = new Date(
+        startOfPeriod.getFullYear(),
+        startOfPeriod.getMonth() + 1,
+        0
+      );
+      endOfPeriod.setDate(lastDayOfMonth.getDate()); // Set to the last day of the month
+    } else if (selectedTimespan === "last 30 days") {
+      // No need to adjust the end date, as it's already 30 days ago in startOfPeriod
+    } else if (selectedTimespan === "this year") {
+      endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the year
+    } else if (selectedTimespan === "last year") {
+      endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the last year
+    } else {
+      endOfPeriod.setDate(startOfPeriod.getDate() + 6); // Move to the end of the week
+    }
+
+    endOfPeriod.setHours(23, 59, 59, 999); // Set time to the last millisecond of the day
+    return endOfPeriod;
   };
 
   const getDatesInRange = (startDate: Date, endDate: Date, humanReadable: boolean) => {
@@ -66,21 +98,25 @@ export default function LineChart() {
       }
       currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
     }
-
+    console.log("dates", dates);
     return dates;
   };
 
-  const startDate = useRef(getStartOfWeek());
-  const endDate = useRef(getEndOfWeek());
+  const startDate = useRef(getStartOfWeek(selectedTimespan));
+  const endDate = useRef(getEndOfWeek(selectedTimespan));
   const formattedDatesList = getDatesInRange(startDate.current, endDate.current, true);
   // const datesList = getDatesInRange(startDate, endDate, false);
   useEffect(() => {
+    const start = getStartOfWeek(selectedTimespan);
+    const end = getEndOfWeek(selectedTimespan);
+    startDate.current = start;
+    endDate.current = end;
+    console.log("TIMESPAN CHANGED", selectedTimespan);
     const findEntriesInRange = () => {
       const filterDates = (index: number) => {
         const currentDate = new Date(startDate.current);
         currentDate.setDate(currentDate.getDate() + index);
         const currentDateStr = currentDate.toISOString().split("T")[0]; // Format: 'YYYY-MM-DD'
-        console.log(currentDateStr);
         const entry = userEntries.find((date: any) => date.date === currentDateStr);
         return entry ? entry : null;
       };
@@ -98,19 +134,28 @@ export default function LineChart() {
           return res ? res.goalsPercent : null;
         }
       );
+      const notesInRange: (number | null)[] = Array.from(
+        { length: endDate.current.getDate() - startDate.current.getDate() + 1 },
+        (_, index) => {
+          const res = filterDates(index);
+          return res ? res.notes : null;
+        }
+      );
+      // console.log(startDate.current, endDate.current, weightsInRange);
       setWeightData(weightsInRange);
       setGoalPercentData(goalPercentsInRange);
+      setNotesData(notesInRange);
     };
 
     findEntriesInRange();
-  }, [userEntries]);
+  }, [userEntries, selectedTimespan]);
 
   const data = {
     labels: formattedDatesList,
     datasets: [
       {
         label: "% of Goals Completed",
-        data: goalPercentData,
+        data: goalsPercentData,
         backgroundColor: themeColors.teal,
         pointRadius: 6,
         borderColor: themeColors.teal,
@@ -132,7 +177,16 @@ export default function LineChart() {
       },
     ],
   };
+
+  const handleClick = (_: any, elements: any) => {
+    if (elements && elements[0] !== null && elements[0] !== undefined) {
+      setSelectedIndex(elements[0].index);
+    } else {
+      setSelectedIndex(null);
+    }
+  };
   const options = {
+    onClick: handleClick,
     responsive: true,
     spanGaps: true,
     interaction: {
@@ -141,6 +195,7 @@ export default function LineChart() {
     },
     stacked: false,
     plugins: {
+      tooltip: { enabled: false },
       legend: {
         display: true,
         labels: {
@@ -164,31 +219,41 @@ export default function LineChart() {
   };
 
   return (
-    <div className="w-5/6 md:w-3/4 pb-40 md:h-screen">
-      <TimespanSelector setSelectedTimespan={setSelectedTimespan} />
+    <div className="flex justify-center items-center">
+      <div className=" pb-40 md:h-screen">
+        <TimespanSelector setSelectedTimespan={setSelectedTimespan} />
 
-      <h1 className="flex justify-center text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
-        THIS WEEK 12.10.23 - 12.16.23
-      </h1>
-      <div
-        className={`flex justify-center bg-[#11172980] md:h-4/6 p-5 md:px-20 rounded-3xl`}
-      >
-        <Line data={data} options={options as any} />
-      </div>
-      <div className="flex justify-center items-center p-4">
-        <Link
-          to="/new-entry-form"
-          style={{ backgroundColor: themeColors.green, fontFamily: themeFonts.subtitle }}
-          className="items-center justify-center flex p-2 px-3 text-xl rounded-xl"
+        <h1 className="flex justify-center text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
+          THIS WEEK {startDate.current.getMonth()}.{startDate.current.getDate()}.
+          {startDate.current.getFullYear()} to {endDate.current.getMonth()}.
+          {endDate.current.getDate()}.{endDate.current.getFullYear()}
+        </h1>
+
+        <div
+          className={`flex flex-col md:flex-row justify-center bg-[#11172980] md:h-4/6 p-5 md:px-10 rounded-3xl`}
         >
-          <FontAwesomeIcon icon={faPlus} className="pr-2" /> New Entry
-        </Link>
-      </div>
-      <div>Your data</div>
-      <div>
-        {userEntries.map((item: any, i: number) => (
-          <div key={`dateData-${i}`}>{item.date}</div>
-        ))}
+          <Line data={data} options={options as any} />
+          <LineChartNotes
+            weightData={weightData}
+            goalsPercentData={goalsPercentData}
+            notesData={notesData}
+            dates={getDatesInRange(startDate.current, endDate.current, true)}
+            index={selectedIndex}
+          />
+        </div>
+
+        <div className="flex justify-center items-center p-4">
+          <Link
+            to="/new-entry-form"
+            style={{
+              backgroundColor: themeColors.green,
+              fontFamily: themeFonts.subtitle,
+            }}
+            className="items-center justify-center flex p-2 px-3 text-xl rounded-xl"
+          >
+            <FontAwesomeIcon icon={faPlus} className="pr-2" /> New Entry
+          </Link>
+        </div>
       </div>
     </div>
   );
