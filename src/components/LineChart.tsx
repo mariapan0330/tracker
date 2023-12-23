@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -38,7 +38,7 @@ export default function LineChart() {
     Tooltip
   );
 
-  const getStartOfWeek = (selectedTimespan: string | undefined) => {
+  const getStartOfWeek = useCallback((selectedTimespan: string | undefined) => {
     const now = new Date();
     const startOfPeriod = new Date(now);
 
@@ -57,32 +57,35 @@ export default function LineChart() {
 
     startOfPeriod.setHours(0, 0, 0, 0); // Set time to midnight
     return startOfPeriod;
-  };
+  }, []);
 
-  const getEndOfWeek = (selectedTimespan: string | undefined) => {
-    const startOfPeriod = getStartOfWeek(selectedTimespan);
-    const endOfPeriod = new Date();
+  const getEndOfWeek = useCallback(
+    (selectedTimespan: string | undefined) => {
+      const startOfPeriod = getStartOfWeek(selectedTimespan);
+      const endOfPeriod = new Date();
 
-    if (selectedTimespan === "this month") {
-      const lastDayOfMonth = new Date(
-        startOfPeriod.getFullYear(),
-        startOfPeriod.getMonth() + 1,
-        0
-      );
-      endOfPeriod.setDate(lastDayOfMonth.getDate()); // Set to the last day of the month
-    } else if (selectedTimespan === "last 30 days") {
-      // No need to adjust the end date, as it's already 30 days ago in startOfPeriod
-    } else if (selectedTimespan === "this year") {
-      endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the year
-    } else if (selectedTimespan === "last year") {
-      endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the last year
-    } else {
-      endOfPeriod.setDate(startOfPeriod.getDate() + 6); // Move to the end of the week
-    }
+      if (selectedTimespan === "this month") {
+        const lastDayOfMonth = new Date(
+          startOfPeriod.getFullYear(),
+          startOfPeriod.getMonth() + 1,
+          0
+        );
+        endOfPeriod.setDate(lastDayOfMonth.getDate()); // Set to the last day of the month
+      } else if (selectedTimespan === "last 30 days") {
+        // No need to adjust the end date, as it's already 30 days ago in startOfPeriod
+      } else if (selectedTimespan === "this year") {
+        endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the year
+      } else if (selectedTimespan === "last year") {
+        endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the last year
+      } else {
+        endOfPeriod.setDate(startOfPeriod.getDate() + 6); // Move to the end of the week
+      }
 
-    endOfPeriod.setHours(23, 59, 59, 999); // Set time to the last millisecond of the day
-    return endOfPeriod;
-  };
+      endOfPeriod.setHours(23, 59, 59, 999); // Set time to the last millisecond of the day
+      return endOfPeriod;
+    },
+    [getStartOfWeek]
+  );
 
   const getDatesInRange = (startDate: Date, endDate: Date, humanReadable: boolean) => {
     const dates = [];
@@ -111,7 +114,6 @@ export default function LineChart() {
     const end = getEndOfWeek(selectedTimespan);
     startDate.current = start;
     endDate.current = end;
-    console.log("TIMESPAN CHANGED", selectedTimespan);
     const findEntriesInRange = () => {
       const filterDates = (index: number) => {
         const currentDate = new Date(startDate.current);
@@ -148,7 +150,7 @@ export default function LineChart() {
     };
 
     findEntriesInRange();
-  }, [userEntries, selectedTimespan]);
+  }, [userEntries, selectedTimespan, getStartOfWeek, getEndOfWeek]);
 
   const data = {
     labels: formattedDatesList,
