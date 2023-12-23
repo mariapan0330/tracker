@@ -3,13 +3,15 @@ import Goal from "./Goal";
 import useUserEmail from "../hooks/useUserEmail";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useStoreGoal from "../hooks/useStoreGoal";
 import themeColors from "../styles/themeColors";
+import useDailyGoalReset from "../hooks/useDailyGoalReset";
 
 export default function GoalList() {
   const [newGoal, setNewGoal] = useState<string>("");
   const userEmail = useUserEmail();
+  const shouldResetGoals = useDailyGoalReset(userEmail);
   const userGoals = useUserGoals(userEmail);
   const storeGoal = useStoreGoal();
   const handleSubmitNewGoal = () => {
@@ -20,6 +22,18 @@ export default function GoalList() {
       setNewGoal("");
     }
   };
+  useEffect(() => {
+    // Reset isComplete fields if shouldResetGoals is true
+    if (shouldResetGoals) {
+      userGoals.forEach(async (goal: any) => {
+        await storeGoal(userEmail, {
+          title: goal.title,
+          isComplete: false,
+        });
+      });
+    }
+  }, [shouldResetGoals, userGoals, storeGoal, userEmail]);
+
   return (
     <div>
       <h1 className="flex justify-center items-end text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">

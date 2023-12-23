@@ -233,7 +233,7 @@ export default function LineChart() {
         </h1>
 
         <div
-          className={`flex flex-col md:flex-row justify-center bg-[#11172980] md:h-4/6 p-5 md:px-10 rounded-3xl`}
+          className={`flex flex-col md:flex-row justify-center bg-[#11172980] md:h-[450px] p-5 md:px-10 rounded-3xl`}
         >
           <Line data={data} options={options as any} />
           <div className="flex flex-col">

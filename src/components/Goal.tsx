@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import themeColors from "../styles/themeColors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -27,28 +27,25 @@ export default function Goal({ goal }: { goal: any }) {
       title: goal.title,
       isComplete: !check,
     });
-    let today = new Date();
-    let completed = countCompletedGoals(userGoals);
-    console.log(
-      "I think the length is ",
-      userGoals.length,
-      "and you've completed",
-      completed
-    );
-    await storeEntry(userEmail, {
-      date: today.toISOString().slice(0, 10),
-      goalsPercent: Math.floor((completed / userGoals.length) * 100),
-      weight: null,
-      notes: null,
-    });
   };
 
-  const countCompletedGoals = (goals: any) => {
-    return goals.reduce(
-      (count: number, goal: goalType) => (goal.isComplete ? count + 1 : count),
-      0
-    );
-  };
+  useEffect(() => {
+    const updateEntry = async () => {
+      let today = new Date();
+      let completed = userGoals.reduce(
+        (count: number, goal: goalType) => (goal.isComplete ? count + 1 : count),
+        0
+      );
+      // console.log("length ", userGoals.length, "completed", completed);
+      await storeEntry(userEmail, {
+        date: today.toISOString().slice(0, 10),
+        goalsPercent: Math.floor((completed / userGoals.length) * 100),
+        weight: null,
+        notes: null,
+      });
+    };
+    updateEntry();
+  }, [userGoals, storeEntry, userEmail]);
 
   const handleDeleteGoal = async () => {
     try {
