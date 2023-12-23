@@ -17,7 +17,7 @@ export default function LineChartNotes({
   index,
 }: LineChartNotesTypes) {
   return (
-    <div className="flex-1 grow md:p-10">
+    <div className="flex md:p-10">
       <div className="text-xl" style={{ fontFamily: themeFonts.subtitle }}>
         <div className="text-2xl font-bold text-yellow-500 pb-4">
           {index ? dates[index] : "Select a day"}
@@ -27,19 +27,19 @@ export default function LineChartNotes({
           <span className="font-bold" style={{ color: themeColors.teal }}>
             Goals Completed:
           </span>{" "}
-          {index ? `${goalsPercentData[index] || "??"}%` : "Select a day"}
+          {index ? `${goalsPercentData[index] || "??"}%` : "..."}
         </div>
         <div className="text-white py-2">
           <span className="font-bold" style={{ color: themeColors.green }}>
             Weight:
           </span>{" "}
-          {index ? `${weightData[index] || "??"} lbs` : "Select a day"}
+          {index ? `${weightData[index] || "??"} lbs` : "..."}
         </div>
         <div className="text-white py-2">
           <span className="font-bold" style={{ color: themeColors.yellow }}>
             Notes:
           </span>{" "}
-          {index ? notesData[index] || "None" : "Select a day"}
+          {index ? notesData[index] || "None" : "..."}
         </div>
       </div>
     </div>

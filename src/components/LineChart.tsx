@@ -11,14 +11,11 @@ import {
   Tooltip,
 } from "chart.js";
 import themeColors from "../styles/themeColors";
-import themeFonts from "../styles/themeFonts";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import useUserEntries from "../hooks/useUserEntries";
 import TimespanSelector from "./TimespanSelector";
 import useUserData from "../hooks/useUserEmail";
 import LineChartNotes from "./LineChartNotes";
+import NewEntryBtn from "./NewEntryBtn";
 
 export default function LineChart() {
   const [selectedTimespan, setSelectedTimespan] = useState<string>("this week");
@@ -44,8 +41,9 @@ export default function LineChart() {
 
     if (selectedTimespan === "this month") {
       startOfPeriod.setDate(1); // Set to the first day of the month
-    } else if (selectedTimespan === "last 30 days") {
-      startOfPeriod.setDate(now.getDate() - 29); // Set to 30 days ago
+    } else if (selectedTimespan === "last month") {
+      startOfPeriod.setMonth(startOfPeriod.getMonth() - 1);
+      startOfPeriod.setDate(1); // Set to the first day of the last month
     } else if (selectedTimespan === "this year") {
       startOfPeriod.setMonth(0, 1); // Set to the first day of the year
     } else if (selectedTimespan === "last year") {
@@ -71,8 +69,8 @@ export default function LineChart() {
           0
         );
         endOfPeriod.setDate(lastDayOfMonth.getDate()); // Set to the last day of the month
-      } else if (selectedTimespan === "last 30 days") {
-        // No need to adjust the end date, as it's already 30 days ago in startOfPeriod
+      } else if (selectedTimespan === "last month") {
+        endOfPeriod.setDate(0); // Set to the last day of the last month
       } else if (selectedTimespan === "this year") {
         endOfPeriod.setFullYear(startOfPeriod.getFullYear(), 11, 31); // Set to the last day of the year
       } else if (selectedTimespan === "last year") {
@@ -101,7 +99,7 @@ export default function LineChart() {
       }
       currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
     }
-    console.log("dates", dates);
+    // console.log("dates", dates);
     return dates;
   };
 
@@ -222,39 +220,32 @@ export default function LineChart() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className=" pb-40 md:h-screen">
+      <div className="pb-36">
         <TimespanSelector setSelectedTimespan={setSelectedTimespan} />
 
-        <h1 className="flex justify-center text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
-          THIS WEEK {startDate.current.getMonth()}.{startDate.current.getDate()}.
-          {startDate.current.getFullYear()} to {endDate.current.getMonth()}.
-          {endDate.current.getDate()}.{endDate.current.getFullYear()}
+        <h1 className="flex justify-center items-end text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
+          {selectedTimespan.toUpperCase()}
+          <span className="text-5xl pl-5">
+            {startDate.current.getMonth() + 1}.{startDate.current.getDate()}.
+            {startDate.current.getFullYear()} to {endDate.current.getMonth() + 1}.
+            {endDate.current.getDate()}.{endDate.current.getFullYear()}
+          </span>
         </h1>
 
         <div
           className={`flex flex-col md:flex-row justify-center bg-[#11172980] md:h-4/6 p-5 md:px-10 rounded-3xl`}
         >
           <Line data={data} options={options as any} />
-          <LineChartNotes
-            weightData={weightData}
-            goalsPercentData={goalsPercentData}
-            notesData={notesData}
-            dates={getDatesInRange(startDate.current, endDate.current, true)}
-            index={selectedIndex}
-          />
-        </div>
-
-        <div className="flex justify-center items-center p-4">
-          <Link
-            to="/new-entry-form"
-            style={{
-              backgroundColor: themeColors.green,
-              fontFamily: themeFonts.subtitle,
-            }}
-            className="items-center justify-center flex p-2 px-3 text-xl rounded-xl"
-          >
-            <FontAwesomeIcon icon={faPlus} className="pr-2" /> New Entry
-          </Link>
+          <div className="flex flex-col">
+            <LineChartNotes
+              weightData={weightData}
+              goalsPercentData={goalsPercentData}
+              notesData={notesData}
+              dates={getDatesInRange(startDate.current, endDate.current, true)}
+              index={selectedIndex}
+            />
+            <NewEntryBtn />
+          </div>
         </div>
       </div>
     </div>

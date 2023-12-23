@@ -2,11 +2,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 const useStoreEntry = () => {
-  const storeEntry = async (
-    email: string | null,
-    entryData: any,
-    userEntries: any
-  ): Promise<boolean> => {
+  const storeEntry = async (email: string | null, entryData: any): Promise<boolean> => {
     if (!email) {
       console.log("no email, so can't store stuff");
       return false;
@@ -14,8 +10,6 @@ const useStoreEntry = () => {
     try {
       console.log("USESTORE selectedDate: ", entryData.date);
       const datesData = doc(db, "users", email, "entries", entryData.date);
-      // const mergedData = { ...entryData, ...userEntries[entryData.date] };
-      // console.log(mergedData);
 
       let validData = {};
       if (entryData.weight) {

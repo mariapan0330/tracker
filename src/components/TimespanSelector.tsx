@@ -25,7 +25,7 @@ export default function TimespanSelector({
       >
         <option value="this week">This Week</option>
         <option value="this month">This Month</option>
-        <option value="last 30 days">Last 30 Days</option>
+        <option value="last month">Last Month</option>
         <option value="this year">This Year</option>
         <option value="last year">Last Year</option>
       </select>

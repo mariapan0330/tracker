@@ -10,15 +10,29 @@ import NewEntryForm from "./components/NewEntryForm";
 
 function App() {
   const [userExists, setUserExists] = useState<boolean | undefined>();
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
-    onAuthStateChanged(auth, () => {
-      setUserExists(auth.currentUser?.email !== undefined);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserExists(!!user?.email);
+      setLoading(false);
     });
+    return () => unsubscribe();
   }, [userExists]);
 
   return (
     <Router>
-      <div className="bg-gradient-to-t from-cyan-700 to-blue-950">
+      <div
+        className={`bg-gradient-to-t from-cyan-700 to-blue-950 h-screen overflow-x-hidden transition-opacity ${
+          loading ? "opacity-100" : "opacity-0 hidden"
+        }`}
+      >
+        <NavBar />
+      </div>
+      <div
+        className={`bg-gradient-to-t from-cyan-700 to-blue-950 ${
+          loading ? "opacity-0" : "opacity-100"
+        } transition-opacity`}
+      >
         <NavBar />
         <Routes>
           <Route path="/" element={userExists ? <Home /> : <Auth />} />

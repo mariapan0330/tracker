@@ -4,7 +4,7 @@ import themeFonts from "../styles/themeFonts";
 import { useNavigate } from "react-router-dom";
 import useStoreEntry from "../hooks/useStoreEntry";
 import useUserEmail from "../hooks/useUserEmail";
-import useUserEntries from "../hooks/useUserEntries";
+import { Link } from "react-router-dom";
 
 export default function NewEntryForm() {
   const [selectedDate, setSelectedDate] = useState<string | undefined>("");
@@ -13,14 +13,12 @@ export default function NewEntryForm() {
   const [notes, setNotes] = useState<string | undefined>("");
   const [submitError, setSubmitError] = useState<string | undefined>("");
   const [submitError2, setSubmitError2] = useState<string | undefined>("");
-  const [submitState, setSubmitState] = useState<string | undefined>("none");
   const navigate = useNavigate();
   const tRef = useRef(new Date());
   const { current: t } = tRef;
-  const inputStyle = "w-80 md:w-80 p-3";
+  const inputStyle = "w-80 md:w-72 p-1 px-3 mb-2 rounded-lg bg-slate-700 text-white";
   const today = `${t.getFullYear()}-${t.getMonth() + 1}-${t.getDate()}`;
   const userEmail = useUserEmail();
-  const userEntries = useUserEntries(userEmail);
   const storeEntry = useStoreEntry();
 
   // const datesData = collection(db, "users", "maria.pan0330@gmail.com", "12 2023");
@@ -28,16 +26,12 @@ export default function NewEntryForm() {
     if (submitError2 === "" && selectedDate && (weight || goalsPercent || notes)) {
       try {
         console.log("FORM selectedDate: ", selectedDate);
-        let res = await storeEntry(
-          userEmail,
-          {
-            date: selectedDate,
-            weight: weight ? Number(weight) : null,
-            goalsPercent: goalsPercent ? Number(goalsPercent) : null,
-            notes: notes ? notes : null,
-          },
-          userEntries
-        );
+        let res = await storeEntry(userEmail, {
+          date: selectedDate,
+          weight: weight ? Number(weight) : null,
+          goalsPercent: goalsPercent ? Number(goalsPercent) : null,
+          notes: notes ? notes : null,
+        });
         if (res === false) {
           throw new Error("Couldn't properly store the entry.");
         }
@@ -121,7 +115,7 @@ export default function NewEntryForm() {
         <div className="flex">
           <input
             type="number"
-            placeholder="Enter a number"
+            placeholder="Enter a number..."
             value={weight}
             className={inputStyle}
             onChange={(e) => {
@@ -144,7 +138,7 @@ export default function NewEntryForm() {
             {selectedDate !== today ? (
               <input
                 type="number"
-                placeholder="Enter a number"
+                placeholder="Enter a number..."
                 max="100"
                 value={goalsPercent}
                 className={inputStyle}
@@ -180,22 +174,36 @@ export default function NewEntryForm() {
         <div className="text-pink-800 mb-1">{submitError2}</div>
         <button
           onClick={handleSubmit}
-          className="text-white text-lg md:text-2xl p-4 md:p-5 rounded-2xl"
-          onMouseEnter={() => setSubmitState("hover")}
-          onMouseLeave={() => setSubmitState("none")}
-          onMouseDown={() => setSubmitState("active")}
-          onMouseUp={() => setSubmitState("hover")}
-          style={{
-            backgroundColor:
-              submitState === "hover"
-                ? themeColors.darkYellow
-                : submitState === "active"
-                ? themeColors.yellow
-                : themeColors.teal,
-          }}
+          className="text-white text-lg md:text-2xl p-4 md:p-5 rounded-2xl
+          
+      bg-gradient-to-t
+      to-[#8ACF9D]
+      from-cyan-600 
+      hover:from-amber-400
+      hover:to-amber-600
+      active:from-cyan-900
+      active:bg-cyan-950"
         >
           Submit
         </button>
+        <Link
+          to="/"
+          className="
+        flex 
+        justify-center
+        pt-3 
+      text-white 
+        text-md md:text-xl 
+        underline underline-offset-2 
+        hover:underline-offset-8 
+        hover:cursor-pointer 
+        active:text-cyan-600
+        "
+          style={{ fontFamily: themeFonts.subtitle }}
+          // onClick={() => setIsSigningUp((p) => !p)}
+        >
+          Back
+        </Link>
       </div>
     </div>
   );
