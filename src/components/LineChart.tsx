@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,19 +11,20 @@ import {
   Tooltip,
 } from "chart.js";
 import themeColors from "../styles/themeColors";
-import { db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore";
 import themeFonts from "../styles/themeFonts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { Link, NavLink } from "react-router-dom";
-import NewEntryForm from "./NewEntryForm";
+import { Link } from "react-router-dom";
+import useUserEntries from "../hooks/useUserEntries";
+import TimespanSelector from "./TimespanSelector";
+import useUserData from "../hooks/useUserEmail";
 
 export default function LineChart() {
-  const [userData, setUserData] = useState<any>([]);
   const [selectedTimespan, setSelectedTimespan] = useState<string>();
-  // const datesCollection = collection(db, "");
-  const datesData = collection(db, "users", "maria.pan0330@gmail.com", "12 2023");
+  const [weightData, setWeightData] = useState<any>([]);
+  const [goalPercentData, setGoalPercentData] = useState<any>([]);
+  const userEmail = useUserData();
+  const userEntries = useUserEntries(userEmail);
   ChartJS.register(
     LineElement,
     CategoryScale,
@@ -33,20 +34,83 @@ export default function LineChart() {
     Title,
     Tooltip
   );
+
+  const getStartOfWeek = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - dayOfWeek); // Move to the beginning of the week
+    startOfWeek.setHours(0, 0, 0, 0); // Set time to midnight
+    return startOfWeek;
+  };
+
+  const getEndOfWeek = () => {
+    const startOfWeek = getStartOfWeek();
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Move to the end of the week
+    endOfWeek.setHours(23, 59, 59, 999); // Set time to the last millisecond of the day
+    return endOfWeek;
+  };
+
+  const getDatesInRange = (startDate: Date, endDate: Date, humanReadable: boolean) => {
+    const dates = [];
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      if (humanReadable) {
+        dates.push(currentDate.toDateString()); // Format the date as a human-readable string
+      } else {
+        dates.push(
+          `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}`
+        );
+      }
+      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+    }
+
+    return dates;
+  };
+
+  const startDate = useRef(getStartOfWeek());
+  const endDate = useRef(getEndOfWeek());
+  const formattedDatesList = getDatesInRange(startDate.current, endDate.current, true);
+  // const datesList = getDatesInRange(startDate, endDate, false);
+  useEffect(() => {
+    const findEntriesInRange = () => {
+      const filterDates = (index: number) => {
+        const currentDate = new Date(startDate.current);
+        currentDate.setDate(currentDate.getDate() + index);
+        const currentDateStr = currentDate.toISOString().split("T")[0]; // Format: 'YYYY-MM-DD'
+        console.log(currentDateStr);
+        const entry = userEntries.find((date: any) => date.date === currentDateStr);
+        return entry ? entry : null;
+      };
+      const weightsInRange: (number | null)[] = Array.from(
+        { length: endDate.current.getDate() - startDate.current.getDate() + 1 },
+        (_, index) => {
+          const res = filterDates(index);
+          return res ? res.weight : null;
+        }
+      );
+      const goalPercentsInRange: (number | null)[] = Array.from(
+        { length: endDate.current.getDate() - startDate.current.getDate() + 1 },
+        (_, index) => {
+          const res = filterDates(index);
+          return res ? res.goalsPercent : null;
+        }
+      );
+      setWeightData(weightsInRange);
+      setGoalPercentData(goalPercentsInRange);
+    };
+
+    findEntriesInRange();
+  }, [userEntries]);
+
   const data = {
-    labels: [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ],
+    labels: formattedDatesList,
     datasets: [
       {
         label: "% of Goals Completed",
-        data: [10, 20, 50, 22, 75, 100, 90],
+        data: goalPercentData,
         backgroundColor: themeColors.teal,
         pointRadius: 6,
         borderColor: themeColors.teal,
@@ -57,7 +121,7 @@ export default function LineChart() {
       },
       {
         label: "Weight",
-        data: [200, 210, 230, 220, 200, 200, 205],
+        data: weightData,
         backgroundColor: themeColors.green,
         pointRadius: 6,
         borderColor: themeColors.green,
@@ -70,6 +134,7 @@ export default function LineChart() {
   };
   const options = {
     responsive: true,
+    spanGaps: true,
     interaction: {
       mode: "index",
       intersect: false,
@@ -87,64 +152,20 @@ export default function LineChart() {
     },
     scales: {
       y: {
+        min: 0,
         ticks: { color: themeColors.green },
         border: { color: themeColors.white },
       },
       x: {
-        ticks: { color: themeColors.green },
+        ticks: { color: themeColors.green, maxRotation: 30, minRotation: 30 },
         border: { color: themeColors.white },
       },
     },
   };
 
-  useEffect(() => {
-    const getUserData = async () => {
-      // read data from db and set userData state to that.
-      try {
-        const res = await getDocs(datesData);
-        const data = res.docs.map((doc) => ({ ...doc.data(), data: doc.id }));
-        console.log(data);
-        setUserData(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getUserData();
-  }, []);
-
   return (
     <div className="w-5/6 md:w-3/4 pb-40 md:h-screen">
-      <div className="flex justify-center items-center">
-        <select
-          name="timespan"
-          id="timespan"
-          style={{
-            backgroundColor: themeColors.darkBlue,
-            fontFamily: themeFonts.subtitle,
-            color: themeColors.yellow,
-          }}
-          className="p-2 px-8 rounded-xl text-lg font-bold"
-        >
-          <option value="this week" onSelect={() => setSelectedTimespan("this week")}>
-            This Week
-          </option>
-          <option value="this month" onSelect={() => setSelectedTimespan("this month")}>
-            This Month
-          </option>
-          <option
-            value="last 30 days"
-            onSelect={() => setSelectedTimespan("last 30 days")}
-          >
-            Last 30 Days
-          </option>
-          <option value="this year" onSelect={() => setSelectedTimespan("this year")}>
-            This Year
-          </option>
-          <option value="last year" onSelect={() => setSelectedTimespan("last year")}>
-            Last Year
-          </option>
-        </select>
-      </div>
+      <TimespanSelector setSelectedTimespan={setSelectedTimespan} />
 
       <h1 className="flex justify-center text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
         THIS WEEK 12.10.23 - 12.16.23
@@ -158,17 +179,17 @@ export default function LineChart() {
         <Link
           to="/new-entry-form"
           style={{ backgroundColor: themeColors.green, fontFamily: themeFonts.subtitle }}
-          className="items-center justify-center flex p-2 px-3 text-xl rounded-3xl"
+          className="items-center justify-center flex p-2 px-3 text-xl rounded-xl"
         >
           <FontAwesomeIcon icon={faPlus} className="pr-2" /> New Entry
         </Link>
       </div>
-      {/* <div>Your data</div>
+      <div>Your data</div>
       <div>
-        {userData.map((item: any, i: number) => (
-          <div key={`dateData-${i}`}>{item.notes}</div>
+        {userEntries.map((item: any, i: number) => (
+          <div key={`dateData-${i}`}>{item.date}</div>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 }

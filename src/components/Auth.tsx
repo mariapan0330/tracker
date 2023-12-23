@@ -11,7 +11,6 @@ export default function Auth() {
   const [pw, setPw] = useState<string>("");
   const [retypePw, setRetypePw] = useState<string>("");
   const [authError, setAuthError] = useState<string>("");
-  // const [userExists, setUserExists] = useState<boolean>();
   const [isSigningUp, setIsSigningUp] = useState<boolean>(false);
 
   const signIn = async () => {

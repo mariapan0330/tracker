@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../config/firebase";
 import themeColors from "../styles/themeColors";
 import themeFonts from "../styles/themeFonts";
 import { useNavigate } from "react-router-dom";
+import useStoreEntry from "../hooks/useStoreEntry";
+import useUserEmail from "../hooks/useUserEmail";
+import useUserEntries from "../hooks/useUserEntries";
 
 export default function NewEntryForm() {
   const [selectedDate, setSelectedDate] = useState<string | undefined>("");
@@ -20,17 +19,28 @@ export default function NewEntryForm() {
   const { current: t } = tRef;
   const inputStyle = "w-80 md:w-80 p-3";
   const today = `${t.getFullYear()}-${t.getMonth() + 1}-${t.getDate()}`;
+  const userEmail = useUserEmail();
+  const userEntries = useUserEntries(userEmail);
+  const storeEntry = useStoreEntry();
 
-  const datesData = collection(db, "users", "maria.pan0330@gmail.com", "12 2023");
+  // const datesData = collection(db, "users", "maria.pan0330@gmail.com", "12 2023");
   const handleSubmit = async () => {
     if (submitError2 === "" && selectedDate && (weight || goalsPercent || notes)) {
       try {
-        await addDoc(datesData, {
-          date: selectedDate ? selectedDate : null,
-          weight: weight ? Number(weight) : null,
-          goalsPercent: goalsPercent ? Number(goalsPercent) : null,
-          notes: notes ? notes : null,
-        });
+        console.log("FORM selectedDate: ", selectedDate);
+        let res = await storeEntry(
+          userEmail,
+          {
+            date: selectedDate,
+            weight: weight ? Number(weight) : null,
+            goalsPercent: goalsPercent ? Number(goalsPercent) : null,
+            notes: notes ? notes : null,
+          },
+          userEntries
+        );
+        if (res === false) {
+          throw new Error("Couldn't properly store the entry.");
+        }
         setSubmitError("");
         setSubmitError2("");
         setSelectedDate("");
@@ -41,7 +51,7 @@ export default function NewEntryForm() {
         navigate("/");
       } catch (error) {
         console.error(error);
-        setSubmitError("ERROR on my end sorry :(((");
+        setSubmitError2("ERROR on my end sorry :(((");
       }
     } else {
       setSubmitError("Select a date and enter at least one field to submit.");
