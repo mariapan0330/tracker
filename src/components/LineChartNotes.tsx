@@ -18,9 +18,9 @@ export default function LineChartNotes({
 }: LineChartNotesTypes) {
   return (
     <div className="flex md:p-10">
-      <div className="text-xl" style={{ fontFamily: themeFonts.subtitle }}>
-        <div className="text-2xl font-bold text-yellow-500 pb-4">
-          {index ? dates[index] : "Select a day"}
+      <div className="text-sm md:text-xl" style={{ fontFamily: themeFonts.subtitle }}>
+        <div className="text-sm md:text-2xl font-bold text-yellow-500 pb-4">
+          {index ? dates[index] : "Select a day or make a new entry"}
         </div>
         <hr className="border-yellow-500 border-t-2" />
         <div className="text-white py-2">

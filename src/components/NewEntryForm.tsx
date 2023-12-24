@@ -17,7 +17,7 @@ export default function NewEntryForm() {
   const tRef = useRef(new Date());
   const { current: t } = tRef;
   const inputStyle = "w-80 md:w-72 p-1 px-3 mb-2 rounded-lg bg-slate-700 text-white";
-  const today = `${t.getFullYear()}-${t.getMonth() + 1}-${t.getDate()}`;
+  // const today = `${t.getFullYear()}-${t.getMonth() + 1}-${t.getDate()}`;
   const userEmail = useUserEmail();
   const storeEntry = useStoreEntry();
 
@@ -78,7 +78,7 @@ export default function NewEntryForm() {
   }, [selectedDate, t]);
 
   return (
-    <div className="h-screen flex justify-center pt-10 bg-gradient-to-t from-yellow-400 to-amber-700">
+    <div className="h-screen flex justify-center pt-10 bg-gradient-to-t from-cyan-400 to-cyan-900">
       <div
         className="
       flex flex-col justify-center items-center
@@ -89,7 +89,7 @@ export default function NewEntryForm() {
         style={{ backgroundColor: themeColors.darkBlue, fontFamily: themeFonts.subtitle }}
       >
         <div className="text-3xl text-white">New Entry</div>
-        <div className="text-yellow-500 font-bold">Date</div>
+        <div className="text-white font-bold">Date</div>
         <input
           className={inputStyle}
           placeholder="date"
@@ -135,33 +135,33 @@ export default function NewEntryForm() {
             % of goals completed
           </div>
           <div className="flex">
-            {selectedDate !== today ? (
-              <input
-                type="number"
-                placeholder="Enter a number..."
-                max="100"
-                value={goalsPercent}
-                className={inputStyle}
-                onChange={(e) => {
-                  setGoalPercent(e.target.value);
-                }}
-                onBlur={() => {
-                  if (goalsPercent) {
-                    setGoalPercent((p) =>
-                      Number(p) > 100 ? "100" : Number(p) < 0 ? "0" : Number(p).toString()
-                    );
-                  }
-                }}
-              />
-            ) : (
+            {/* {selectedDate !== today ? ( */}
+            <input
+              type="number"
+              placeholder="Enter a number..."
+              max="100"
+              value={goalsPercent}
+              className={inputStyle}
+              onChange={(e) => {
+                setGoalPercent(e.target.value);
+              }}
+              onBlur={() => {
+                if (goalsPercent) {
+                  setGoalPercent((p) =>
+                    Number(p) > 100 ? "100" : Number(p) < 0 ? "0" : Number(p).toString()
+                  );
+                }
+              }}
+            />
+            {/* ) : (
               <div style={{ color: "#22A5BA" }} className="flex flex-wrap">
                 Calculated for today based on your checklist.
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
-        <div className="text-yellow-500 font-bold">Notes</div>
+        <div className="text-white font-bold">Notes</div>
         <div className="flex">
           <textarea
             placeholder="Enter notes..."

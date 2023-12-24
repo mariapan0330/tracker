@@ -36,7 +36,7 @@ export default function GoalList() {
 
   return (
     <div>
-      <h1 className="flex justify-center items-end text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
+      <h1 className="flex justify-center items-end text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-teal-400 to-cyan-600 bg-clip-text text-transparent">
         DAILY GOALS
       </h1>
       {userGoals.map((goal: any, i: number) => (

@@ -36,7 +36,7 @@ export default function Goal({ goal }: { goal: any }) {
         (count: number, goal: goalType) => (goal.isComplete ? count + 1 : count),
         0
       );
-      // console.log("length ", userGoals.length, "completed", completed);
+      console.log("length ", userGoals.length, "completed", completed);
       await storeEntry(userEmail, {
         date: today.toISOString().slice(0, 10),
         goalsPercent: Math.floor((completed / userGoals.length) * 100),
@@ -60,8 +60,10 @@ export default function Goal({ goal }: { goal: any }) {
   return (
     <div className="flex justify-between items-center">
       <div
-        className="p-3 w-80 m-2 text-white rounded-xl cursor-pointer"
-        style={{ backgroundColor: goal.isComplete ? themeColors.teal : themeColors.blue }}
+        className="p-3 w-80 m-2 text-white rounded-xl cursor-pointer bg-cyan-700"
+        // style={{
+        //   backgroundColor: goal.isComplete ? themeColors.green : themeColors.blue,
+        // }}
         onClick={handleClick}
       >
         <FontAwesomeIcon

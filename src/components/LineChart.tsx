@@ -223,9 +223,9 @@ export default function LineChart() {
       <div className="pb-36">
         <TimespanSelector setSelectedTimespan={setSelectedTimespan} />
 
-        <h1 className="flex justify-center items-end text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
+        <h1 className="md:flex text-center justify-center items-center md:items-end text-3xl md:text-6xl font-bold font-['Righteous'] bg-gradient-to-t from-[#22a5ba] to-[#fcfd7f] bg-clip-text text-transparent">
           {selectedTimespan.toUpperCase()}
-          <span className="text-5xl pl-5">
+          <span className="text-2xl md:text-5xl pl-3 md:pl-5">
             {startDate.current.getMonth() + 1}.{startDate.current.getDate()}.
             {startDate.current.getFullYear()} to {endDate.current.getMonth() + 1}.
             {endDate.current.getDate()}.{endDate.current.getFullYear()}

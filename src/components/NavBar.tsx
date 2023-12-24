@@ -39,27 +39,27 @@ export default function NavBar() {
           <img
             src={require("../images/trackerLogo.png")}
             alt="logo"
-            className="w-10 md:w-16 mr-2 md:mr-5 select-none"
+            className="h-10 md:w-16 mr-2 md:mr-5 select-none"
           />
-          <div className="text-2xl md:text-5xl font-bold font-['Righteous'] bg-gradient-to-r from-cyan-600 to-yellow-200 bg-clip-text text-transparent select-none">
-            TRACKER
+          <div className="text-xl md:text-5xl font-bold font-['Righteous'] bg-gradient-to-r from-yellow-600 to-yellow-200 bg-clip-text text-transparent select-none">
+            GOLDEN ACHIEVER
           </div>
         </div>
       </a>
       {/* <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" /> */}
 
       {userExists && (
-        <>
-          <div className="text-yellow-500 hover:cursor-pointer hover:text-cyan-500 active:text-cyan-800">
+        <div className="flex flex-col-reverse md:flex-row">
+          <div className="text-sm md:text-lg text-yellow-500 md:mr-10">
             <FontAwesomeIcon icon={faCircleUser} /> {auth?.currentUser?.email}
           </div>
           <div
-            className="text-yellow-500 hover:cursor-pointer hover:text-cyan-500 active:text-cyan-800"
+            className="text-sm md:text-lg text-yellow-500 hover:cursor-pointer hover:text-cyan-500 active:text-cyan-800"
             onClick={() => handleSignOut()}
           >
             Log Out <FontAwesomeIcon icon={faArrowRightFromBracket} />
           </div>
-        </>
+        </div>
       )}
     </div>
   );

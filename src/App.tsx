@@ -29,7 +29,8 @@ function App() {
         <NavBar />
       </div>
       <div
-        className={`bg-gradient-to-t from-cyan-700 to-blue-950 ${
+        className={`bg-gradient-to-t from-cyan-800 to-blue-950  ${
+          // className={`bg-gradient-to-br from-yellow-400 via-green-300 to-cyan-800 ${
           loading ? "opacity-0" : "opacity-100"
         } transition-opacity`}
       >

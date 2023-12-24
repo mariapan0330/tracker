@@ -12,9 +12,9 @@ export default function NewEntryBtn() {
           fontFamily: themeFonts.subtitle,
         }}
         className="flex items-center justify-center 
-      p-6
+      p-3 md:p-6
       rounded-xl 
-      text-2xl font-bold
+      text-lg md:text-2xl font-bold
       bg-gradient-to-t
       from-amber-600
       to-amber-400
