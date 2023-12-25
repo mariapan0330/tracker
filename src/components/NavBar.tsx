@@ -39,9 +39,9 @@ export default function NavBar() {
           <img
             src={require("../images/trackerLogo.png")}
             alt="logo"
-            className="h-10 md:w-16 mr-2 md:mr-5 select-none"
+            className="h-10 md:h-12 mr-2 md:mr-5 select-none"
           />
-          <div className="text-xl md:text-5xl font-bold font-['Righteous'] bg-gradient-to-r from-yellow-600 to-yellow-200 bg-clip-text text-transparent select-none">
+          <div className="text-xl md:text-5xl font-bold font-['Righteous'] bg-gradient-to-r from-amber-600 to-yellow-400 bg-clip-text text-transparent select-none">
             GOLDEN ACHIEVER
           </div>
         </div>

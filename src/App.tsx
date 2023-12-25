@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./config/firebase";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import NewEntryForm from "./components/NewEntryForm";
+import Footer from "./components/Footer";
 
 function App() {
   const [userExists, setUserExists] = useState<boolean | undefined>();
@@ -40,6 +41,7 @@ function App() {
           <Route path="/new-entry-form" element={<NewEntryForm />} />
         </Routes>
       </div>
+      <Footer />
     </Router>
   );
 }
