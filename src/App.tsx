@@ -23,25 +23,20 @@ function App() {
   return (
     <Router>
       <div
-        className={`bg-gradient-to-t from-cyan-700 to-blue-950 h-screen overflow-x-hidden transition-opacity ${
+        className={`bg-gradient-to-t from-cyan-700 to-blue-950 h-screen transition-opacity ${
           loading ? "opacity-100" : "opacity-0 hidden"
         }`}
-      >
-        <NavBar />
-      </div>
+      ></div>
       <div
-        className={`bg-gradient-to-t from-cyan-800 to-blue-950  ${
-          // className={`bg-gradient-to-br from-yellow-400 via-green-300 to-cyan-800 ${
-          loading ? "opacity-0" : "opacity-100"
-        } transition-opacity`}
+        className={`bg-gradient-to-t from-cyan-800 to-blue-950 relative max-w-screen overflow-x-hidden`}
       >
         <NavBar />
         <Routes>
           <Route path="/" element={userExists ? <Home /> : <Auth />} />
           <Route path="/new-entry-form" element={<NewEntryForm />} />
         </Routes>
+        <Footer />
       </div>
-      <Footer />
     </Router>
   );
 }

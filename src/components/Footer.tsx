@@ -7,15 +7,19 @@ export default function Footer() {
   return (
     <div
       className="
-    flex flex-col md:flex-row 
-    justify-between items-center
-    bottom-0 p-4 px-8 
-    bg-slate-900 text-yellow-500
-    "
+      flex flex-col md:flex-row
+      justify-between items-center
+      bottom-0 p-4 px-8 md:pr-12
+      bg-slate-900 text-yellow-500
+      box-border w-screen
+      overflow-x-hidden
+      "
       style={{ fontFamily: themeFonts.subtitle }}
     >
-      <div className="flex font-bold">
-        <p className="pr-5">Designed by Angelina Panagos</p>
+      <div className="flex flex-col md:flex-row font-bold text-center md:text-start">
+        <p className="md:pr-5">
+          Designed by <span>Angelina Panagos</span>
+        </p>
         <p>
           Developed by{" "}
           <a
